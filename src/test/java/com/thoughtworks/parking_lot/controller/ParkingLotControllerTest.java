@@ -14,11 +14,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Collections;
-
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,6 +46,26 @@ public class ParkingLotControllerTest {
                                     .content(asJsonString(parkingLot)));
 
         result.andExpect(status().isCreated()).andExpect(jsonPath("$.name", is("Test")));
+    }
+
+    @Test
+    public void should_return_OK_response_when_given_valid_parking_lot_name() throws Exception {
+        buildParkingLot();
+
+        when(parkingLotService.deleteParkingLot("OOCLPARK")).thenReturn(true);
+
+        ResultActions result = mvc.perform(delete("/parkingLot/{parkingLotName}", "OOCLPARK"));
+
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_return_NOT_FOUND_response_when_given_invalid_parking_lot_name() throws Exception {
+        buildParkingLot();
+
+        ResultActions result = mvc.perform(delete("/parkingLot/{parkingLotName}", "OOCLPARK"));
+
+        result.andExpect(status().isNotFound());
     }
 
     private void buildParkingLot() {

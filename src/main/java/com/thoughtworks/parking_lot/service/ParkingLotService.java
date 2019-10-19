@@ -15,4 +15,15 @@ public class ParkingLotService {
         parkingLotRepository.save(newParkingLot);
         return newParkingLot;
     }
+
+    public boolean deleteParkingLot(String parkingLotName) {
+        ParkingLot parkingLotForDeletion = parkingLotRepository.findByName(parkingLotName);
+
+        if(parkingLotForDeletion != null){
+            parkingLotRepository.delete(parkingLotForDeletion);
+            return true;
+        }
+
+        return false;
+    }
 }
