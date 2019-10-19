@@ -3,6 +3,8 @@ package com.thoughtworks.parking_lot.service;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.repository.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,5 +27,14 @@ public class ParkingLotService {
         }
 
         return false;
+    }
+
+    public ResponseEntity<ParkingLot> getSpecificParkingLot(String parkingLotName) {
+        ParkingLot parkingLot = parkingLotRepository.findByName(parkingLotName);
+
+        if(parkingLot != null){
+            return new ResponseEntity<>(parkingLot, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

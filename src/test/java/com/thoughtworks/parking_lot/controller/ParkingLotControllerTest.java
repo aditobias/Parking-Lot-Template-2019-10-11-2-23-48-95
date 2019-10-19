@@ -8,7 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,8 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +65,33 @@ public class ParkingLotControllerTest {
         buildParkingLot();
 
         ResultActions result = mvc.perform(delete("/parkingLot/{parkingLotName}", "OOCLPARK"));
+
+        result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void should_return_parkingLot_and_OK_response_when_given_valid_parking_lot_name() throws Exception {
+        buildParkingLot();
+
+        when(parkingLotService.getSpecificParkingLot("OOCLPARKING"))
+                .thenReturn(new ResponseEntity<>(parkingLot, HttpStatus.OK));
+
+        ResultActions result = mvc.perform(get("/parkingLot/{parkingLotName}", "OOCLPARKING"));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Test")))
+                .andExpect(jsonPath("$.capacity", is(10)))
+                .andExpect(jsonPath("$.location",is("Parañaque")));
+    }
+
+    @Test
+    public void should_return_NOT_FOUND_when_given_invalid_parking_lot_name() throws Exception {
+        buildParkingLot();
+
+        when(parkingLotService.getSpecificParkingLot("INVALID"))
+                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        ResultActions result = mvc.perform(get("/parkingLot/{parkingLotName}", "INVALID"));
 
         result.andExpect(status().isNotFound());
     }

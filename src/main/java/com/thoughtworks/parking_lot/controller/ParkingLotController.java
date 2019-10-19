@@ -29,4 +29,9 @@ public class ParkingLotController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping(value = "/{parkingLotName}", produces = {"application/json"})
+    public ResponseEntity<ParkingLot> getSpecificParkingLot(@PathVariable String parkingLotName){
+        return parkingLotService.getSpecificParkingLot(parkingLotName);
+    }
 }
