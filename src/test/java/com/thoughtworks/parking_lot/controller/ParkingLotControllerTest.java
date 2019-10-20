@@ -41,7 +41,6 @@ public class ParkingLotControllerTest {
     private ParkingLot parkingLot = new ParkingLot();
 
     @Test
-
     void should_return_posted_parkingLot_when_given_new_parking_lot() throws Exception {
         buildParkingLot();
 
@@ -79,7 +78,7 @@ public class ParkingLotControllerTest {
         buildParkingLot();
 
         when(parkingLotService.getSpecificParkingLot("OOCLPARKING"))
-                .thenReturn(new ResponseEntity<>(parkingLot, HttpStatus.OK));
+                .thenReturn(parkingLot);
 
         ResultActions result = mvc.perform(get("/parkingLot/{parkingLotName}", "OOCLPARKING"));
 
@@ -94,7 +93,7 @@ public class ParkingLotControllerTest {
         buildParkingLot();
 
         when(parkingLotService.getSpecificParkingLot("INVALID"))
-                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .thenReturn(null);
 
         ResultActions result = mvc.perform(get("/parkingLot/{parkingLotName}", "INVALID"));
 

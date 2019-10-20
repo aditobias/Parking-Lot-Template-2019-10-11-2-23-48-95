@@ -31,7 +31,11 @@ public class ParkingLotController {
 
     @GetMapping(value = "/{parkingLotName}", produces = {"application/json"})
     public ResponseEntity<ParkingLot> getSpecificParkingLot(@PathVariable String parkingLotName){
-        return parkingLotService.getSpecificParkingLot(parkingLotName);
+        ParkingLot parkingLot = parkingLotService.getSpecificParkingLot(parkingLotName);
+        if(parkingLot != null){
+            return new ResponseEntity<>(parkingLot,HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping(produces = {"application/json"})

@@ -30,13 +30,10 @@ public class ParkingLotService {
         return false;
     }
 
-    public ResponseEntity<ParkingLot> getSpecificParkingLot(String parkingLotName) {
+    public ParkingLot getSpecificParkingLot(String parkingLotName) {
         ParkingLot parkingLot = parkingLotRepository.findByName(parkingLotName);
 
-        if(parkingLot != null){
-            return new ResponseEntity<>(parkingLot, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return parkingLot;
     }
 
     public Iterable<ParkingLot> getParkingLotPageAndPageSize(Integer page, Integer pageSize) {
@@ -49,8 +46,27 @@ public class ParkingLotService {
 
         if(oldParkingLot != null){
             oldParkingLot.setCapacity(updatedParkingLot.getCapacity());
+            parkingLotRepository.save(oldParkingLot);
             return new ResponseEntity<>(oldParkingLot, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    public void deductParkingLotCapacity(String parkingLotName){
+        ParkingLot oldParkingLot = parkingLotRepository.findByName(parkingLotName);
+
+        if(oldParkingLot != null){
+            oldParkingLot.setCapacity(oldParkingLot.getCapacity() - 1);
+            parkingLotRepository.save(oldParkingLot);
+        }
+    }
+
+    public void increaseParkingLotCapacity(String parkingLotName) {
+        ParkingLot oldParkingLot = parkingLotRepository.findByName(parkingLotName);
+
+        if(oldParkingLot != null){
+            oldParkingLot.setCapacity(oldParkingLot.getCapacity() + 1);
+            parkingLotRepository.save(oldParkingLot);
+        }
     }
 }
