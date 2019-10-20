@@ -1,10 +1,10 @@
 package com.thoughtworks.parking_lot.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.parking_lot.model.Order;
 import com.thoughtworks.parking_lot.model.ParkingLot;
-import com.thoughtworks.parking_lot.service.OrderService;
+import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import com.thoughtworks.parking_lot.service.ParkingOrderService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,19 +39,20 @@ class OrderControllerTest {
     ParkingLotService parkingLotService;
 
     @MockBean
-    OrderService orderService;
+    ParkingOrderService orderService;
 
     @Autowired
     private MockMvc mvc;
 
     private ParkingLot parkingLot = new ParkingLot();
-    private Order order = new Order();
+    private ParkingOrder order = new ParkingOrder();
+
     @Test
     public void should_return_new_parking_order_when_given_valid_parking_lot_name_and_plate_number() throws Exception {
         buildParkingLot();
         buildParkingLotOrder();
 
-        Order newOrder = new Order();
+        ParkingOrder newOrder = new ParkingOrder();
         newOrder.setPlateNumber("PLATE");
 
         when(parkingLotService.getSpecificParkingLot("OOCL")).thenReturn(parkingLot);
@@ -65,6 +67,28 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.number", is("123ABC")))
                 .andExpect(jsonPath("$.plateNumber", is("PLATE")))
                 .andExpect(jsonPath("$.parkingLotName", is("Test")));
+
+    }
+
+    @Test
+    public void should_return_parking_order_when_given_valid_parking_name_and_parking_order() throws Exception {
+        buildParkingLot();
+        buildParkingLotOrder();
+
+
+        when(parkingLotService.getSpecificParkingLot("OOCL")).thenReturn(parkingLot);
+        doNothing().when(parkingLotService).increaseParkingLotCapacity(anyString());
+        order.setOrderStatus("CLOSED");
+        order.setOutTime(Timestamp.valueOf("2019-10-22 10:00:00.0"));
+        when(orderService.updateParkingOrder("TESTING")).thenReturn(new ResponseEntity<>(order, HttpStatus.OK));
+        ResultActions result = mvc.perform(patch("/parkingLot/{parkingLotName}/order/{orderNumber}"
+                , "OOCL", "TESTING")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(order)));
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderStatus", is("CLOSED")))
+                .andExpect(jsonPath("$.outTime", is("2019-10-22T02:00:00.000+0000")));
 
     }
 
@@ -83,7 +107,7 @@ class OrderControllerTest {
         parkingLot.setLocation("Parañaque");
     }
 
-    static String asJsonString(final Order obj) {
+    static String asJsonString(final ParkingOrder obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {

@@ -7,7 +7,7 @@ public class ParkingLot {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private int id;
 
     @Column(unique = true)
     private String name;
@@ -15,11 +15,11 @@ public class ParkingLot {
     private Integer capacity;
     private String location;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

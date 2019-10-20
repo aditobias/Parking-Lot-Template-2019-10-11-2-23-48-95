@@ -1,33 +1,26 @@
 package com.thoughtworks.parking_lot.model;
 
-import org.hibernate.annotations.ColumnDefault;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-public class Order {
+public class ParkingOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private int id;
 
     private String number;
     private String parkingLotName;
     private String plateNumber;
     private Timestamp inTime;
     private Timestamp outTime;
-
-    @ColumnDefault("open")
     private String orderStatus;
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

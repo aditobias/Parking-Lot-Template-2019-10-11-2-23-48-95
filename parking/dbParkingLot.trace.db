@@ -1,0 +1,9 @@
+2019-10-20 19:49:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE ORDER[*] (ID INTEGER NOT NULL, IN_TIME TIMESTAMP, NUMBER VARCHAR(255), ORDER_STATUS VARCHAR(255) DEFAULT OPEN, OUT_TIME TIMESTAMP, PARKING_LOT_NAME VARCHAR(255), PLATE_NUMBER VARCHAR(255), PRIMARY KEY (ID)) "; expected "identifier"; SQL statement:
+create table order (orderId integer not null, in_time timestamp, number varchar(255), order_status varchar(255) default open, out_time timestamp, parking_lot_name varchar(255), plate_number varchar(255), primary key (orderId)) [42001-199]
+2019-10-20 19:49:49 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE ORDER[*] (ID INTEGER NOT NULL, IN_TIME TIMESTAMP, NUMBER VARCHAR(255), ORDER_STATUS VARCHAR(255) DEFAULT OPEN, OUT_TIME TIMESTAMP, PARKING_LOT_NAME VARCHAR(255), PLATE_NUMBER VARCHAR(255), PRIMARY KEY (ID)) "; expected "identifier"; SQL statement:
+create table order (orderId integer not null, in_time timestamp, number varchar(255), order_status varchar(255) default open, out_time timestamp, parking_lot_name varchar(255), plate_number varchar(255), primary key (orderId)) [42001-199]
+2019-10-20 19:54:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "CREATE TABLE ORDER[*] (ID INTEGER NOT NULL, IN_TIME TIMESTAMP, NUMBER VARCHAR(255), ORDER_STATUS VARCHAR(255) DEFAULT OPEN, OUT_TIME TIMESTAMP, PARKING_LOT_NAME VARCHAR(255), PLATE_NUMBER VARCHAR(255), PRIMARY KEY (ID)) "; expected "identifier"; SQL statement:
+create table order (orderId integer not null, in_time timestamp, number varchar(255), order_status varchar(255) default open, out_time timestamp, parking_lot_name varchar(255), plate_number varchar(255), primary key (orderId)) [42001-199]

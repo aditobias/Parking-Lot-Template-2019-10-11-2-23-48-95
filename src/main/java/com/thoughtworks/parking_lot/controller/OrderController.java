@@ -1,9 +1,9 @@
 package com.thoughtworks.parking_lot.controller;
 
-import com.thoughtworks.parking_lot.model.Order;
 import com.thoughtworks.parking_lot.model.ParkingLot;
-import com.thoughtworks.parking_lot.service.OrderService;
+import com.thoughtworks.parking_lot.model.ParkingOrder;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import com.thoughtworks.parking_lot.service.ParkingOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,17 +13,24 @@ import org.springframework.web.bind.annotation.*;
 public class OrderController {
 
     @Autowired
-    OrderService orderService;
+    ParkingOrderService parkingOrderService;
 
     @Autowired
     ParkingLotService parkingLotService;
 
 
     @PostMapping(consumes = {"application/json"})
-    public ResponseEntity<Order> addParkingOrder(@PathVariable String parkingLotName, @RequestBody Order order){
+    public ResponseEntity<ParkingOrder> addParkingOrder(@PathVariable String parkingLotName,
+                                                        @RequestBody ParkingOrder parkingOrder){
         ParkingLot parkingLot =  parkingLotService.getSpecificParkingLot(parkingLotName);
         parkingLotService.deductParkingLotCapacity(parkingLotName);
-        return orderService.addParkingOrder(parkingLot, order);
+        return parkingOrderService.addParkingOrder(parkingLot, parkingOrder);
     }
 
+    @PatchMapping(path = "/{orderNumber}", consumes = {"application/json"})
+    public ResponseEntity<ParkingOrder> updateParkingOrder(@PathVariable String parkingLotName,
+                                                           @PathVariable String orderNumber){
+        parkingLotService.increaseParkingLotCapacity(parkingLotName);
+        return parkingOrderService.updateParkingOrder(orderNumber);
+    }
 }
