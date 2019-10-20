@@ -3,6 +3,7 @@ package com.thoughtworks.parking_lot.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.parking_lot.model.ParkingLot;
 import com.thoughtworks.parking_lot.service.ParkingLotService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,10 +39,11 @@ public class ParkingLotControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    ParkingLot parkingLot = new ParkingLot();
+    private ParkingLot parkingLot = new ParkingLot();
 
     @Test
-    public void should_return_posted_parkingLot_when_given_new_parking_lot() throws Exception {
+
+    void should_return_posted_parkingLot_when_given_new_parking_lot() throws Exception {
         buildParkingLot();
 
         when(parkingLotService.addParkingLot(any())).thenReturn(parkingLot);
@@ -53,7 +56,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    public void should_return_OK_response_when_given_valid_parking_lot_name() throws Exception {
+    void should_return_OK_response_when_given_valid_parking_lot_name() throws Exception {
         buildParkingLot();
 
         when(parkingLotService.deleteParkingLot("OOCLPARK")).thenReturn(true);
@@ -64,7 +67,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    public void should_return_NOT_FOUND_response_when_given_invalid_parking_lot_name() throws Exception {
+    void should_return_NOT_FOUND_response_when_given_invalid_parking_lot_name() throws Exception {
         buildParkingLot();
 
         ResultActions result = mvc.perform(delete("/parkingLot/{parkingLotName}", "OOCLPARK"));
@@ -73,7 +76,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    public void should_return_parkingLot_and_OK_response_when_given_valid_parking_lot_name() throws Exception {
+    void should_return_parkingLot_and_OK_response_when_given_valid_parking_lot_name() throws Exception {
         buildParkingLot();
 
         when(parkingLotService.getSpecificParkingLot("OOCLPARKING"))
@@ -88,7 +91,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    public void should_return_NOT_FOUND_when_given_invalid_parking_lot_name() throws Exception {
+    void should_return_NOT_FOUND_when_given_invalid_parking_lot_name() throws Exception {
         buildParkingLot();
 
         when(parkingLotService.getSpecificParkingLot("INVALID"))
@@ -100,7 +103,7 @@ public class ParkingLotControllerTest {
     }
 
     @Test
-    public void should_return_list_of_parking_lot_when_given_indicated_page_and_page_size() throws Exception {
+    void should_return_list_of_parking_lot_when_given_indicated_page_and_page_size() throws Exception {
         buildParkingLot();
 
         when(parkingLotService.getParkingLotPageAndPageSize(0,15))
@@ -116,13 +119,49 @@ public class ParkingLotControllerTest {
         result.andExpect(status().isOk()).andExpect(jsonPath("$[0].name", is("Test")));
     }
 
+    @Test
+    void should_return_updated_parking_lot_when_given_valid_parking_lot_and_parking_lot() throws Exception {
+        buildParkingLot();
+
+        ParkingLot updatedParkingLot = new ParkingLot();
+        updatedParkingLot.setName(parkingLot.getName());
+        updatedParkingLot.setLocation(parkingLot.getLocation());
+        updatedParkingLot.setCapacity(20);
+
+        when(parkingLotService.updateParkingLot(eq("OOCLPARKING"),any()))
+                .thenReturn(new ResponseEntity<>(updatedParkingLot, HttpStatus.OK));
+
+        ResultActions result = mvc.perform(patch("/parkingLot/{parkingLotName}", "OOCLPARKING")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(parkingLot)));
+
+
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.capacity", is(20)));
+    }
+
+    @Test
+    void should_return_NOT_FOUND_when_given_invalid_parking_lot_and_parking_lot() throws Exception {
+        buildParkingLot();
+
+        when(parkingLotService.updateParkingLot(eq("INVALID"),any()))
+                .thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+
+        ResultActions result = mvc.perform(patch("/parkingLot/{parkingLotName}", "INVALID")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(parkingLot)));
+
+        result.andExpect(status().isNotFound());
+    }
+
     private void buildParkingLot() {
         parkingLot.setCapacity(10);
         parkingLot.setName("Test");
         parkingLot.setLocation("Parañaque");
     }
 
-    public static String asJsonString(final ParkingLot obj) {
+    static String asJsonString(final ParkingLot obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {

@@ -39,8 +39,13 @@ public class ParkingLotController {
     @ResponseStatus(code = HttpStatus.OK)
     public Iterable<ParkingLot> getParkingLotPageAndPageSize(
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "15") Integer pageSize
-    ){
+            @RequestParam(required = false, defaultValue = "15") Integer pageSize){
         return parkingLotService.getParkingLotPageAndPageSize(page, pageSize);
+    }
+
+    @PatchMapping(value = "/{parkingLotName}", consumes = {"application/json"})
+    public ResponseEntity<ParkingLot> updateSpecificParkingLotCapacity(@PathVariable String parkingLotName,
+                                                                       @RequestBody ParkingLot updatedParkingLot){
+        return parkingLotService.updateParkingLot(parkingLotName, updatedParkingLot);
     }
 }

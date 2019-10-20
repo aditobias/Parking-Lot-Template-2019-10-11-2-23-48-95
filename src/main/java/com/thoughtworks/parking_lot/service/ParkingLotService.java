@@ -44,4 +44,14 @@ public class ParkingLotService {
        return parkingLotRepository.findAll(PageRequest.of(page, pageSize));
 
     }
+
+    public ResponseEntity<ParkingLot> updateParkingLot(String parkingLotName, ParkingLot updatedParkingLot) {
+        ParkingLot oldParkingLot = parkingLotRepository.findByName(parkingLotName);
+
+        if(oldParkingLot != null){
+            oldParkingLot.setCapacity(updatedParkingLot.getCapacity());
+            return new ResponseEntity<>(oldParkingLot, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
