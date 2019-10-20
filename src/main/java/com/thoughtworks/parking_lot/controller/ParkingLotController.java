@@ -34,4 +34,13 @@ public class ParkingLotController {
     public ResponseEntity<ParkingLot> getSpecificParkingLot(@PathVariable String parkingLotName){
         return parkingLotService.getSpecificParkingLot(parkingLotName);
     }
+
+    @GetMapping(produces = {"application/json"})
+    @ResponseStatus(code = HttpStatus.OK)
+    public Iterable<ParkingLot> getParkingLotPageAndPageSize(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "15") Integer pageSize
+    ){
+        return parkingLotService.getParkingLotPageAndPageSize(page, pageSize);
+    }
 }

@@ -15,6 +15,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+
+import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,6 +97,23 @@ public class ParkingLotControllerTest {
         ResultActions result = mvc.perform(get("/parkingLot/{parkingLotName}", "INVALID"));
 
         result.andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void should_return_list_of_parking_lot_when_given_indicated_page_and_page_size() throws Exception {
+        buildParkingLot();
+
+        when(parkingLotService.getParkingLotPageAndPageSize(0,15))
+                .thenReturn(Collections.singletonList(parkingLot));
+
+        LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+
+        requestParams.add("page", "0");
+        requestParams.add("pageSize", "15");
+
+        ResultActions result = mvc.perform(get("/parkingLot").params(requestParams));
+
+        result.andExpect(status().isOk()).andExpect(jsonPath("$[0].name", is("Test")));
     }
 
     private void buildParkingLot() {
